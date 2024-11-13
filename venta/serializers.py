@@ -1,6 +1,7 @@
 from http import client
 from rest_framework import serializers
 from .models import Cliente, Producto, Factura, DetallesFactura
+from django.db.models import Sum
 
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,18 +28,19 @@ class DetallesFacturaSerializer(serializers.ModelSerializer):
         return "${:,.2f}".format(obj.precio_total)
 
 class FacturaSerializer(serializers.ModelSerializer):
-    total_formateado = serializers.SerializerMethodField()
-    numero_factura = serializers.IntegerField()
-    detalles = DetallesFacturaSerializer(many=True, read_only=True)
-    cliente = ClienteSerializer()
-    
+    numero_factura = serializers.CharField()
+    cliente_nombre = serializers.CharField(source="cliente.nombre")
+    fecha = serializers.DateTimeField()
+    total = serializers.SerializerMethodField()  # El campo se llama `total`
 
     class Meta:
         model = Factura
-        fields = ['numero_factura', 'cliente', 'vendedor', 'fecha', 'sucursal', 'total_formateado', 'detalles']
+        fields = ["numero_factura", "cliente_nombre", "fecha", "total"]
 
-    def get_total_formateado(self, obj):
-        return "${:,.2f}".format(obj.total)
+    def get_total(self, obj):  # Cambia `get_valorFactura` por `get_total`
+        total = obj.detalles.aggregate(total=Sum('precio_total'))['total']
+        return "${:,.2f}".format(total) if total else "$0.00"
+
     
 class CrearVentaSerializer(serializers.Serializer):
     cliente_id = serializers.IntegerField()

@@ -4,17 +4,17 @@ from venta.models import Factura, DetallesFactura
 from django.db.models import Sum
 
 class FacturaSerializer(serializers.ModelSerializer):
-    numero_factura = serializers.CharField(source="numero_factura")
+    numero_factura = serializers.CharField()
     cliente_nombre = serializers.CharField(source="cliente.nombre")
-    fecha = serializers.DateTimeField(source="fecha")
-    total = serializers.SerializerMethodField()
+    fecha = serializers.DateTimeField()
+    total = serializers.SerializerMethodField()  # El campo se llama `total`
 
     class Meta:
         model = Factura
-        fields = ["numero_factura", "cliente_nombre",  "fecha", "total"]
+        fields = ["numero_factura", "cliente_nombre", "fecha", "total"]
 
-    def get_valorFactura(self, obj):
-        total = obj.detalles.aggregate(total=Sum('total'))['total']
+    def get_total(self, obj):  # Cambia `get_valorFactura` por `get_total`
+        total = obj.detalles.aggregate(total=Sum('precio_total'))['total']
         return "${:,.2f}".format(total) if total else "$0.00"
 
 
