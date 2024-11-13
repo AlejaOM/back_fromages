@@ -6,7 +6,6 @@ from django.db.models import Max
 @receiver(post_save, sender=Factura)
 def asignar_numero_factura(sender, instance, created, **kwargs):
     if created and instance.numero_factura is None:
-        # Asignar el último número de factura
         ultimo_numero = Factura.objects.filter(numero_factura__isnull=False).aggregate(Max('numero_factura'))['numero_factura__max'] or 0
         instance.numero_factura = ultimo_numero + 1
         instance.save()

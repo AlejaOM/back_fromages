@@ -18,7 +18,6 @@ class UsuarioManager(BaseUserManager):
 
 class Usuario(AbstractBaseUser, PermissionsMixin):
     nombre = models.CharField(max_length=30)
-    apellido = models.CharField(max_length=30)
     documento = models.CharField(max_length=20, unique=True)
     rol = models.CharField(max_length=20)
     nombre_usuario = models.CharField(max_length=20, unique=True)

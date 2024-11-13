@@ -11,6 +11,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         user = Usuario
         token = super().get_token(user)
         token['nombre_usuario'] = user.nombre_usuario
+        token['role'] = user.rol
         return token
     
     def validate(self, attrs):
@@ -19,10 +20,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             "rol": self.user.rol  
         })
         return data
-
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
-
 
 class LoginSerializer(serializers.Serializer):
     nombre_usuario = serializers.CharField()  
