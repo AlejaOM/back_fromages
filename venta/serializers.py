@@ -5,7 +5,7 @@ from .models import Cliente, Producto, Factura, DetallesFactura
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cliente
-        fields = ['documento', 'nombre', 'apellido', 'email', 'celular']
+        fields = ['documento', 'nombre', 'email', 'celular']
 
 class ProductoSerializer(serializers.ModelSerializer):
     class Meta:

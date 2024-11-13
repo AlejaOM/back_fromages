@@ -4,12 +4,11 @@ from django.conf import settings
 class Cliente(models.Model):
     documento = models.BigIntegerField(unique=True)
     nombre = models.CharField(max_length=50)
-    apellido = models.CharField(max_length=50)
     email = models.EmailField(blank=True, null=True)
     celular = models.CharField(max_length=20, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.nombre} {self.apellido} - {self.documento}"
+        return f"{self.nombre} - {self.documento}"
 
 class Producto(models.Model):
     nombre = models.CharField(max_length=100)

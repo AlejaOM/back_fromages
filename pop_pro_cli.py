@@ -7,21 +7,19 @@ django.setup()
 
 from venta.models import Cliente, Producto
 
-# Datos de clientes
 clientes = [
-    {'documento': '1890786576', 'nombre': 'Juan', 'apellido': 'Alban', 'email': None, 'celular': None},
-    {'documento': '1298765477', 'nombre': 'Maria', 'apellido': 'Cordero', 'email': None, 'celular': None},
-    {'documento': '1009876567', 'nombre': 'Pedro', 'apellido': 'Pinto', 'email': None, 'celular': None},
-    {'documento': '1876090006', 'nombre': 'Pablo', 'apellido': 'Ponce', 'email': None, 'celular': None},
-    {'documento': '1893456776', 'nombre': 'Lorena', 'apellido': 'Paz', 'email': None, 'celular': None},
-    {'documento': '1678999891', 'nombre': 'Rosario', 'apellido': 'Utreras', 'email': None, 'celular': None},
-    {'documento': '1244567888', 'nombre': 'Leticia', 'apellido': 'Ortega', 'email': None, 'celular': None},
-    {'documento': '1456799022', 'nombre': 'Juan', 'apellido': 'Torres', 'email': None, 'celular': None},
-    {'documento': '1845677777', 'nombre': 'Jorge', 'apellido': 'Parra', 'email': None, 'celular': None},
-    {'documento': '183445667', 'nombre': 'Pablo', 'apellido': 'Polit', 'email': None, 'celular': None},
+    {'documento': '1890786576', 'nombre': 'Juan Alban', 'email': None, 'celular': None},
+    {'documento': '1298765477', 'nombre': 'Maria Cordero', 'email': None, 'celular': None},
+    {'documento': '1009876567', 'nombre': 'Pedro Pinto', 'email': None, 'celular': None},
+    {'documento': '1876090006', 'nombre': 'Pablo Ponce', 'email': None, 'celular': None},
+    {'documento': '1893456776', 'nombre': 'Lorena Paz', 'email': None, 'celular': None},
+    {'documento': '1678999891', 'nombre': 'Rosario Utreras', 'email': None, 'celular': None},
+    {'documento': '1244567888', 'nombre': 'Leticia Ortega', 'email': None, 'celular': None},
+    {'documento': '1456799022', 'nombre': 'Juan Torres', 'email': None, 'celular': None},
+    {'documento': '1845677777', 'nombre': 'Jorge Parra', 'email': None, 'celular': None},
+    {'documento': '183445667', 'nombre': 'Pablo Polit', 'email': None, 'celular': None},
 ]
 
-# Insertar clientes
 for cliente_data in clientes:
     Cliente.objects.create(**cliente_data)
 

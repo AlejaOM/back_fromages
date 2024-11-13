@@ -38,7 +38,7 @@ class LoginSerializer(serializers.Serializer):
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = ['id', 'documento', 'nombre', 'apellido', 'nombre_usuario', 'rol']
+        fields = ['id', 'documento', 'nombre', 'nombre_usuario', 'rol']
         extra_kwargs = {'password': {'write_only': True}}
 
 class LogoutSerializer(serializers.Serializer):

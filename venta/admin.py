@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Cliente, Producto, Factura, DetallesFactura
 
 class ClienteAdmin(admin.ModelAdmin):
-    list_display = ('documento', 'nombre', 'apellido', 'email', 'celular')
+    list_display = ('documento', 'nombre', 'email', 'celular')
     readonly_fields = ('documento',)  
 
 class ProductoAdmin(admin.ModelAdmin):
