@@ -15,18 +15,25 @@ class FacturaSerializer(serializers.ModelSerializer):
 
     def get_total(self, obj):  # Cambia `get_valorFactura` por `get_total`
         total = obj.detalles.aggregate(total=Sum('precio_total'))['total']
-        return "${:,.2f}".format(total) if total else "$0.00"
+        return "${:,.2f}".format(obj.total).replace(",", "X").replace(".", ",").replace("X", ".")
 
 
 class DetallesFacturaSerializer(serializers.ModelSerializer):
     producto_id = serializers.CharField(source="producto.id")
     producto_nombre = serializers.CharField(source="producto.nombre")
-    precio_unitario = serializers.DecimalField(max_digits=10, decimal_places=2)
-    precio_total = serializers.DecimalField(max_digits=10, decimal_places=2)
+    precio_unitario = serializers.SerializerMethodField()
+    precio_total = serializers.SerializerMethodField()
 
     class Meta:
         model = DetallesFactura
         fields = ["producto_id", "producto_nombre", "cantidad", "precio_unitario", "precio_total"]
+
+    def get_precio_unitario(self, obj):
+        return "${:,.2f}".format(obj.precio_unitario).replace(",", "X").replace(".", ",").replace("X", ".")
+
+    def get_precio_total(self, obj):
+        return "${:,.2f}".format(obj.precio_total).replace(",", "X").replace(".", ",").replace("X", ".")
+
 
 class FacturaDetalleSerializer(serializers.ModelSerializer):
     cliente_nombre = serializers.CharField(source="cliente.nombre")
