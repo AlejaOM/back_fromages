@@ -104,7 +104,10 @@ WSGI_APPLICATION = 'fromages_back.wsgi.application'
 
 
 DATABASES = {
-    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'), conn_max_age=600, ssl_require=True)
+    'default': dj_database_url.config(
+        default=os.getenv('postgresql://fromages_bck_p:LLNmKTCJtnwBWp9TP6fwXAEBgKHLzB8y@dpg-csrpcbrtq21c739nm060-a.oregon-postgres.render.com/fromages_bck_p'), 
+        conn_max_age=600, 
+        ssl_require=True)
 }
 # Agrega esto si usas múltiples esquemas
 DATABASES['default']['OPTIONS'] = {
