@@ -102,15 +102,10 @@ WSGI_APPLICATION = 'fromages_back.wsgi.application'
 #    }
 #}
 
-DATABASES = {
-    'default': dj_database_url.config(
-        # La conexión local debe especificarse aquí como predeterminada
-        default='postgresql://hnfmjxpm:UF1is8zhNfZnUmWs5RS2zvL-_Iral6g8@lallah.db.elephantsql.com:5432/hnfmjxpm',
-        conn_max_age=600,
-        ssl_require=False 
-    )
-}
 
+DATABASES = {
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'), conn_max_age=600, ssl_require=True)
+}
 # Agrega esto si usas múltiples esquemas
 DATABASES['default']['OPTIONS'] = {
     'options': '-c search_path=fromages,public'
