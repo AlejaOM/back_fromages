@@ -50,7 +50,7 @@ class ReporteView(APIView):
 class SucursalListView(APIView):
     def get(self, request):
         sucursales = [
-            {"id": "1", "nombre": "Sucursal Fromages"}
+            {"id": "1", "nombre": "Fromages"}
         ]
         return Response(sucursales)
     
