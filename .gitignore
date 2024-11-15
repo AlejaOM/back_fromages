@@ -10,6 +10,8 @@ env/
 # Archivos de migraciones
 */migrations/*
 !*/migrations/__init__.py
+!*/migrations/*.py
+
 
 # Archivos generados por Django
 *.log
