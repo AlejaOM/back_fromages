@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os 
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,13 +23,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-^)##4b5!%2)22v*eopce2uk$&-*e6ehr_3)!a^oi^f%op&=b=!'
+SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key') #Render
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = 'RENDER' not in os.environ
 
 ALLOWED_HOSTS = []
 
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 # Application definition
 
@@ -80,20 +85,28 @@ WSGI_APPLICATION = 'fromages_back.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'hnfmjxpm',        
-        'USER': 'hnfmjxpm',        
-        'PASSWORD': 'UF1is8zhNfZnUmWs5RS2zvL-_Iral6g8',    
-        'HOST': 'lallah.db.elephantsql.com',        
-        'PORT': '5432',   
-        'OPTIONS': {
-            'options': '-c search_path=fromages'
-        }         
-    }
-}
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'hnfmjxpm',        
+#        'USER': 'hnfmjxpm',        
+#        'PASSWORD': 'UF1is8zhNfZnUmWs5RS2zvL-_Iral6g8',    
+#        'HOST': 'lallah.db.elephantsql.com',        
+#        'PORT': '5432',   
+#        'OPTIONS': {
+#            'options': '-c search_path=fromages'
+#        }         
+#    }
+#}
 
+DATABASES = {
+    'default': dj_database_url.config(
+        # La conexión local debe especificarse aquí como predeterminada
+        default='postgresql://hnfmjxpm:UF1is8zhNfZnUmWs5RS2zvL-_Iral6g8@lallah.db.elephantsql.com:5432/hnfmjxpm',
+        conn_max_age=600,
+        ssl_require=False 
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
