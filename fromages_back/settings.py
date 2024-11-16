@@ -179,9 +179,8 @@ if not DEBUG:
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
-    'fromages-web-app.onrender.com',  # Dominio del backend
-    'front-fromages.onrender.com',   # Dominio del frontend
-    'localhost',
+    'fromages-web-app.onrender.com',  
+    'front-fromages.onrender.com',  
 ]
 CORS_ALLOW_ALL_ORIGINS = True 
 
