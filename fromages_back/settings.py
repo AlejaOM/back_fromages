@@ -102,17 +102,31 @@ WSGI_APPLICATION = 'fromages_back.wsgi.application'
 #    }
 #}
 
-
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('postgresql://fromages_bck_p:LLNmKTCJtnwBWp9TP6fwXAEBgKHLzB8y@dpg-csrpcbrtq21c739nm060-a.oregon-postgres.render.com/fromages_bck_p'), 
-        conn_max_age=600, 
-        ssl_require=True)
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME', 'hnfmjxpm'),
+        'USER': os.getenv('DB_USER', 'hnfmjxpm'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'UF1is8zhNfZnUmWs5RS2zvL-_Iral6g8'),
+        'HOST': os.getenv('DB_HOST', 'lallah.db.elephantsql.com'),
+        'PORT': os.getenv('DB_PORT', '5432'),
+        'OPTIONS': {
+            'options': f"-c search_path={os.getenv('DB_SCHEMA', 'fromages')}"
+        },
+    }
 }
-# Agrega esto si usas múltiples esquemas
-DATABASES['default']['OPTIONS'] = {
-    'options': '-c search_path=fromages,public'
-}
+
+#
+#DATABASES = {
+#    'default': dj_database_url.config(
+#        default=os.getenv('postgresql://fromages_bck_p:LLNmKTCJtnwBWp9TP6fwXAEBgKHLzB8y@dpg-csrpcbrtq21c739nm060-a.oregon-postgres.render.com/fromages_bck_p'), 
+#        conn_max_age=600, 
+#        ssl_require=True)
+#}
+## Agrega esto si usas múltiples esquemas
+#DATABASES['default']['OPTIONS'] = {
+#    'options': '-c search_path=fromages,public'
+#}
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
