@@ -29,9 +29,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key') #Render
 DEBUG = 'RENDER' not in os.environ
 
 ALLOWED_HOSTS = [
-    'fromages-web-app.onrender.com',  # Dominio del backend
-    'front-fromages.onrender.com',   # Dominio del frontend
-    'localhost',
+    'https://fromages-web-app.onrender.com',  # Dominio del backend
+    'https://front-fromages.onrender.com',   # Dominio del frontend
+    
 ]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
@@ -179,8 +179,8 @@ if not DEBUG:
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
-    'fromages-web-app.onrender.com',  
-    'front-fromages.onrender.com',  
+    'https://fromages-web-app.onrender.com',  
+    'https://front-fromages.onrender.com',  
 ]
 CORS_ALLOW_ALL_ORIGINS = True 
 
