@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key') #Render
 DEBUG = 'RENDER' not in os.environ
 
 ALLOWED_HOSTS = [
-    "http://localhost:4200",
+    "https://front-fromages.onrender.com/",
 ]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
@@ -53,6 +53,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', 
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -61,7 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware', 
+    
 ]
 
 ROOT_URLCONF = 'fromages_back.urls'
