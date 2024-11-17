@@ -2,6 +2,8 @@ from http import client
 from rest_framework import serializers
 from .models import Cliente, Producto, Factura, DetallesFactura
 from django.db.models import Sum
+from django.db import transaction
+
 
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,26 +24,25 @@ class DetallesFacturaSerializer(serializers.ModelSerializer):
         fields = ['producto', 'cantidad', 'precio_unitario_formateado', 'precio_total_formateado']
 
     def get_precio_unitario_formateado(self, obj):
-        return "${:,.2f}".format(obj.precio_unitario)
+        return "${:,.2f}".format(obj.precio_unitario).replace(",", "X").replace(".", ",").replace("X", ".")
+
 
     def get_precio_total_formateado(self, obj):
-        return "${:,.2f}".format(obj.precio_total)
+        return "${:,.2f}".format(obj.precio_total).replace(",", "X").replace(".", ",").replace("X", ".")
 
 class FacturaSerializer(serializers.ModelSerializer):
     numero_factura = serializers.CharField()
     cliente_nombre = serializers.CharField(source="cliente.nombre")
     fecha = serializers.DateTimeField()
-    total = serializers.SerializerMethodField()  # El campo se llama `total`
+    total = serializers.SerializerMethodField()
 
     class Meta:
         model = Factura
         fields = ["numero_factura", "cliente_nombre", "fecha", "total"]
 
-    def get_total(self, obj):  # Cambia `get_valorFactura` por `get_total`
-        total = obj.detalles.aggregate(total=Sum('precio_total'))['total']
-        return "${:,.2f}".format(total) if total else "$0.00"
+    def get_total(self, obj):  
+        return "${:,.2f}".format(obj.total).replace(",", "X").replace(".", ",").replace("X", ".")
 
-    
 class CrearVentaSerializer(serializers.Serializer):
     cliente_id = serializers.IntegerField()
     productos = serializers.ListField(
@@ -53,7 +54,7 @@ class CrearVentaSerializer(serializers.Serializer):
     def validate(self, data):
         cliente_id = data.get('cliente_id')
         productos = data.get('productos')
-      
+
         if not Cliente.objects.filter(id=cliente_id).exists():
             raise serializers.ValidationError("El cliente no existe.")
         
@@ -74,25 +75,24 @@ class CrearVentaSerializer(serializers.Serializer):
         vendedor = self.context['request'].user
         productos_data = validated_data['productos']
 
-        # Creación de una factura temporal sin número asignado aún
-        factura = Factura.objects.create(cliente=cliente, vendedor=vendedor)
-
-        for producto_data in productos_data:
-            producto = Producto.objects.get(id=producto_data['producto_id'])
-            cantidad = producto_data['cantidad']
-
-            # Descuenta el stock provisionalmente
-            producto.stock -= cantidad
-            producto.save()
-
-            # Crea el detalle de la factura
-            DetallesFactura.objects.create(  
-                factura=factura,
-                producto=producto,
-                cantidad=cantidad,
-                precio_unitario=producto.precio,  # Asignamos el precio actual del producto
-                precio_total=producto.precio * cantidad
+        with transaction.atomic():
+            factura = Factura.objects.create(
+                cliente=cliente,
+                vendedor=vendedor
             )
+            for producto_data in productos_data:
+                producto = Producto.objects.get(id=producto_data['producto_id'])
+                cantidad = producto_data['cantidad']
+                producto.stock -= cantidad
+                producto.save()
+                DetallesFactura.objects.create(
+                    factura=factura,
+                    producto=producto,
+                    cantidad=cantidad,
+                    precio_unitario=producto.precio,
+                    precio_total=producto.precio * cantidad
+                )
+            factura.total = sum(item['cantidad'] * Producto.objects.get(id=item['producto_id']).precio for item in productos_data)
+            factura.save()
 
         return factura
-   

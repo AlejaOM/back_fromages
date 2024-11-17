@@ -7,13 +7,13 @@ class FacturaSerializer(serializers.ModelSerializer):
     numero_factura = serializers.CharField()
     cliente_nombre = serializers.CharField(source="cliente.nombre")
     fecha = serializers.DateTimeField()
-    total = serializers.SerializerMethodField()  # El campo se llama `total`
+    total = serializers.SerializerMethodField()  
 
     class Meta:
         model = Factura
         fields = ["numero_factura", "cliente_nombre", "fecha", "total"]
 
-    def get_total(self, obj):  # Cambia `get_valorFactura` por `get_total`
+    def get_total(self, obj):
         total = obj.detalles.aggregate(total=Sum('precio_total'))['total']
         return "${:,.2f}".format(obj.total).replace(",", "X").replace(".", ",").replace("X", ".")
 
@@ -50,5 +50,5 @@ class FacturaDetalleSerializer(serializers.ModelSerializer):
         ]
 
     def get_total(self, obj):
-        return "${:,.2f}".format(obj.total)
+        return "${:,.2f}".format(obj.total).replace(",", "X").replace(".", ",").replace("X", ".")
  

@@ -2,18 +2,19 @@ from django.contrib import admin
 from .models import Cliente, Producto, Factura, DetallesFactura
 
 class ClienteAdmin(admin.ModelAdmin):
-    list_display = ('documento', 'nombre', 'email', 'celular')
+    list_display = ('id','documento', 'nombre', 'email', 'celular')
     readonly_fields = ('documento',)  
 
 class ProductoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'precio', 'stock')
+    list_display = ('id','nombre', 'precio', 'stock')
     readonly_fields = ('precio',) 
 
-admin.site.register(Cliente)
-admin.site.register(Producto)
+admin.site.register(Cliente, ClienteAdmin)
+admin.site.register(Producto, ProductoAdmin)
 
 def formato_dinero(valor):
-    return "${:,.2f}".format(valor) 
+    return "${:,.2f}".format(valor).replace(",", "X").replace(".", ",").replace("X", ".")
+
 
 class DetallesFacturaAdmin(admin.ModelAdmin):
     list_display = ('factura', 'producto', 'cantidad', 'mostrar_precio_unitario', 'mostrar_precio_total')
