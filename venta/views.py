@@ -19,7 +19,10 @@ class ClienteView(APIView):
 class ProductoView(APIView):
     def get(self, request):
         query = request.GET.get('query')
-        productos = Producto.objects.filter(nombre__icontains=query) | Producto.objects.filter(id=query)
+        if query:
+            productos = Producto.objects.filter(nombre__icontains=query) | Producto.objects.filter(id=query)
+        else:
+            productos = Producto.objects.all()
         serializer = ProductoSerializer(productos, many=True)
         return Response(serializer.data)
     
