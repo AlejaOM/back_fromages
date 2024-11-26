@@ -7,7 +7,7 @@ from django.db import transaction
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cliente
-        fields = ['documento', 'nombre', 'email', 'celular']
+        fields = ['id', 'documento', 'nombre', 'email', 'celular']
 
 class ProductoSerializer(serializers.ModelSerializer):
     precio_formateado = serializers.SerializerMethodField()
