@@ -4,17 +4,21 @@ from .models import Cliente, Producto, Factura, DetallesFactura
 from django.db.models import Sum
 from django.db import transaction
 
-
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cliente
         fields = ['documento', 'nombre', 'email', 'celular']
 
 class ProductoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Producto
-        fields = ['id', 'nombre', 'precio', 'stock']
+    precio_formateado = serializers.SerializerMethodField()
 
+    class Meta:  
+        model = Producto
+        fields = ['id', 'nombre', 'precio', 'stock', 'precio_formateado']
+
+    def get_precio_formateado(self, obj):
+        return f"${obj.precio:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    
 class DetallesFacturaSerializer(serializers.ModelSerializer):
     precio_unitario_formateado = serializers.SerializerMethodField()
     precio_total_formateado = serializers.SerializerMethodField()
