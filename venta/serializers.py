@@ -18,7 +18,7 @@ class ProductoSerializer(serializers.ModelSerializer):
 
     def get_precio_formateado(self, obj):
         return f"${obj.precio:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-    
+  
 class DetallesFacturaSerializer(serializers.ModelSerializer):
     precio_unitario_formateado = serializers.SerializerMethodField()
     precio_total_formateado = serializers.SerializerMethodField()
