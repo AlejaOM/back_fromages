@@ -10,7 +10,7 @@ from django.urls import reverse
 client = APIClient()
 
 login_url = reverse("login")
-login_data = {"nombre_usuario": "veronicaM", "password": "Veronica123"}
+login_data = {"nombre_usuario": "juanP", "password": "Juan123"}
 login_response = client.post(login_url, login_data, format='json')
 
 if login_response.status_code == 200:

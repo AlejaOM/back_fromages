@@ -23,9 +23,6 @@ SECRET_KEY = 'django-insecure-^)##4b5!%2)22v*eopce2uk$&-*e6ehr_3)!a^oi^f%op&=b=!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -132,10 +129,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",  
+    'http://localhost:4200',  # URL de tu aplicación frontend
 ]
+
 CORS_ALLOW_ALL_ORIGINS = True 
 
 REST_FRAMEWORK = {
@@ -156,4 +153,4 @@ SIMPLE_JWT = {
 
 AUTH_USER_MODEL = 'usuario.Usuario'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
+ALLOWED_HOSTS = ['*']
