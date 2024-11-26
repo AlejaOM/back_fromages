@@ -1,3 +1,5 @@
+from urllib import request
+import jwt
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -5,6 +7,7 @@ from django.db.models import Sum
 from venta.models import Factura, DetallesFactura, Cliente
 from .serializers import FacturaDetalleSerializer, FacturaSerializer, DetallesFacturaSerializer
 from datetime import datetime
+from rest_framework.permissions import IsAuthenticated
 
 class ReporteView(APIView):
     def get(self, request):
@@ -78,3 +81,29 @@ class ReporteFacturasView(APIView):
 
         serializer = FacturaSerializer(facturas, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class FacturaListView(APIView):
+    def get(self, request):
+        # Obtener el vendedor_id desde el usuario autenticado
+        vendedor_id = request.user.id  # Suponiendo que el vendedor es el usuario autenticado
+
+        fecha_inicio = request.query_params.get('fecha_inicio')
+        fecha_fin = request.query_params.get('fecha_fin')
+
+        # Filtrar facturas por vendedor_id
+        facturas = Factura.objects.filter(vendedor_id=vendedor_id)
+
+        # Filtrar por fechas si están presentes
+        if fecha_inicio and fecha_fin:
+            try:
+                fecha_inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d').date()
+                fecha_fin = datetime.strptime(fecha_fin, '%Y-%m-%d').date()
+            except ValueError:
+                return Response({"error": "Formato de fecha incorrecto, usa YYYY-MM-DD"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            facturas = facturas.filter(fecha__date__range=[fecha_inicio, fecha_fin])
+
+        # Serializar y devolver las facturas
+        serializer = FacturaSerializer(facturas, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
