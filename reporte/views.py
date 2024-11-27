@@ -8,49 +8,45 @@ from venta.models import Factura, DetallesFactura, Cliente
 from .serializers import FacturaDetalleSerializer, FacturaSerializer, DetallesFacturaSerializer
 from datetime import datetime
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
+
 
 class ReporteView(APIView):
+    permission_classes = [AllowAny]
     def get(self, request):
-        option = request.query_params.get("option")
+        # Recuperar los parámetros de la consulta
         fecha_inicio = request.query_params.get("fecha_inicio")
         fecha_fin = request.query_params.get("fecha_fin")
-        sucursal = request.query_params.get("sucursal", "Fromages")  # Valor por defecto "Fromages"
+        sucursal = request.query_params.get("sucursal")  # Parámetro sucursal
 
-        
+        # Verificar que ambas fechas estén presentes
         if not fecha_inicio or not fecha_fin:
             return Response({"error": "Las fechas de inicio y fin son obligatorias"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
+            # Convertir las fechas a formato datetime.date
             fecha_inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d').date()
             fecha_fin = datetime.strptime(fecha_fin, '%Y-%m-%d').date()
         except ValueError:
             return Response({"error": "Formato de fecha incorrecto, usa YYYY-MM-DD"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if option == "facturas":
-            facturas = Factura.objects.filter(fecha__date__range=[fecha_inicio, fecha_fin])
+        # Filtrar las facturas según las fechas
+        facturas = Factura.objects.filter(fecha__date__range=[fecha_inicio, fecha_fin])
 
-            if sucursal == "Fromages":
-                facturas = facturas.filter(sucursal="Fromages")
+        # Filtrar por sucursal si se proporciona
+        if sucursal:
+            try:
+                sucursal = int(sucursal)  # Convertir "sucursal" a entero
+                facturas = facturas.filter(sucursal=sucursal)  # Filtrar por sucursal
+            except ValueError:
+                return Response({"error": "El valor de 'sucursal' debe ser un número entero."}, status=status.HTTP_400_BAD_REQUEST)
 
-            facturas = facturas.annotate(total_factura=Sum('detalles__precio_total'))
-            serializer = FacturaSerializer(facturas, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-        elif option == "productos":
-            detalles = DetallesFactura.objects.filter(factura__fecha__date__range=[fecha_inicio, fecha_fin])
-
-            if sucursal == "Fromages":
-                detalles = detalles.filter(factura__sucursal="Fromages")
-
-            detalles = detalles.values('producto__id', 'producto__nombre').annotate(
-                cantidadVendida=Sum('cantidad'),
-                totalVentas=Sum('precio_total')
-            )
-            return Response(detalles, status=status.HTTP_200_OK)
-
-        return Response({"error": "Opción no válida"}, status=status.HTTP_400_BAD_REQUEST)
+        # Serializar las facturas
+        serializer = FacturaSerializer(facturas, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class SucursalListView(APIView):
+    permission_classes = [AllowAny] 
     def get(self, request):
         sucursales = [
             {"id": "1", "nombre": "Fromages"}
@@ -58,6 +54,7 @@ class SucursalListView(APIView):
         return Response(sucursales)
     
 class FacturaDetalleView(APIView):
+    permission_classes = [AllowAny] 
     def get(self, request, numero_factura):
         try:
             factura = Factura.objects.get(numero_factura=numero_factura)
@@ -67,6 +64,7 @@ class FacturaDetalleView(APIView):
             return Response({"error": "Factura no encontrada."}, status=status.HTTP_404_NOT_FOUND)
 
 class ReporteFacturasView(APIView):
+    permission_classes = [AllowAny] 
     def get(self, request):
         fecha_inicio = request.query_params.get("fecha_inicio")
         fecha_fin = request.query_params.get("fecha_fin")
@@ -83,6 +81,7 @@ class ReporteFacturasView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class FacturaListView(APIView):
+    permission_classes = [AllowAny] 
     def get(self, request):
         # Obtener el vendedor_id desde el usuario autenticado
         vendedor_id = request.user.id  # Suponiendo que el vendedor es el usuario autenticado
